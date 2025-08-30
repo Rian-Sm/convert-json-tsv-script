@@ -1,0 +1,62 @@
+import 'dart:io';
+import 'package:collection/collection.dart';
+import 'package:pretty_json/pretty_json.dart';
+
+class Converter {
+
+  static Map<String,dynamic>? convertToJson(List<String> value) {
+    Map<String,dynamic>? jsonSet = {};
+
+    value.forEachIndexed((index, line) {
+        if(index != 0 ){
+          var values = line.split('\t');
+
+          jsonSet[values[0]] = {
+            value[0].split('\t')[1]: values[1],
+            value[0].split('\t')[2]: values[2],
+          };
+
+          print({
+            value[0].split('\t')[1]: values[1],
+            value[0].split('\t')[2]: values[2],
+          });
+        }
+      });
+    return jsonSet;
+  }
+
+  static void convertTsvToJson(String filePath) {
+    var file = File(filePath);
+
+    file.readAsLines().then((lines) {
+      var jsonData = Converter.convertToJson(lines);
+
+      File('${filePath.split('.').first}.json').writeAsString(prettyJson(jsonData,indent: 2));
+
+      print(prettyJson(jsonData,indent: 2));
+    });
+  }
+
+static void main(List<String> arguments){
+  print(arguments);
+
+  if(arguments.length != 2) {
+    print('Please provide file type and the file path as argument');
+    return;
+  }
+
+  switch (arguments[0]) {
+    case 'json':
+      print('Converting json to json');
+      throw UnimplementedError();
+      break;
+    case 'tsv':
+      print('Converting tsv to json');
+      Converter.convertTsvToJson(arguments[1]);
+      break;
+    default:
+      print('File type not supported');
+      return;
+  }
+  }
+}
