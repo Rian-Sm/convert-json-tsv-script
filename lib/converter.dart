@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:pretty_json/pretty_json.dart';
 
@@ -25,6 +26,24 @@ class Converter {
     return jsonSet;
   }
 
+  static void convertToTsv (String jsonRaw, String filePath) {
+    print('ok: $jsonRaw');
+    if (jsonRaw.isEmpty) return;
+
+    var jsonData = json.decode(jsonRaw);
+
+    var file = File(filePath);
+    var sink = file.openWrite();
+
+    sink.writeln('slug\ttitle\tdescription');
+
+    jsonData.forEach((key, value) {
+      sink.writeln('$key\t${value['title']}\t${value['description']}');
+    });
+
+    sink.close();
+  }
+
   static void convertTsvToJson(String filePath) {
     var file = File(filePath);
 
@@ -37,6 +56,31 @@ class Converter {
     });
   }
 
+  static void convertJsonToTsv(String filePath) {
+    var file = File(filePath);
+    print('ok');
+
+    file.readAsLines().then((lines) {
+
+
+      print('ok, $filePath');
+   Converter.convertToTsv(
+        lines.toString()
+        .replaceAll('[', '')
+        .replaceAll(']', '')
+        .replaceAll(',,', ',')
+        .replaceAll('{,', '{')
+        .replaceAll('\n', '')
+        .replaceAll('  ', '')
+        .replaceAll(', }', '}'),
+        '${filePath.split('.').first}.tsv'
+      );
+      });
+
+
+    }
+  
+
 static void main(List<String> arguments){
   print(arguments);
 
@@ -47,8 +91,8 @@ static void main(List<String> arguments){
 
   switch (arguments[0]) {
     case 'json':
-      print('Converting json to json');
-      throw UnimplementedError();
+      print('Converting json to tsv');
+      Converter.convertJsonToTsv(arguments[1]);
       break;
     case 'tsv':
       print('Converting tsv to json');
