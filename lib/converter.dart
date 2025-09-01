@@ -72,7 +72,8 @@ class Converter {
         .replaceAll('{,', '{')
         .replaceAll('\n', '')
         .replaceAll('  ', '')
-        .replaceAll(', }', '}'),
+        .replaceAll(', }', '}')
+        .replaceAll('}},', '}}'),
         '${filePath.split('.').first}.tsv'
       );
       });
