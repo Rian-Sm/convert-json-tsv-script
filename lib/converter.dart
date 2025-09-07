@@ -27,11 +27,9 @@ class Converter {
   }
 
   static void convertToTsv (String jsonRaw, String filePath) {
-    print('ok: $jsonRaw');
     if (jsonRaw.isEmpty) return;
 
     var jsonData = json.decode(jsonRaw);
-
     var file = File(filePath);
     var sink = file.openWrite();
 
@@ -50,9 +48,11 @@ class Converter {
     file.readAsLines().then((lines) {
       var jsonData = Converter.convertToJson(lines);
 
-      File('${filePath.split('.').first}.json').writeAsString(prettyJson(jsonData,indent: 2));
+      String stringData = prettyJson(jsonData,indent: 2);
 
-      print(prettyJson(jsonData,indent: 2));
+      File('${filePath.split('.').first}.json').writeAsString(stringData);
+
+      print('value:\n\n${stringData.replaceAll(RegExp(r'\"'), "'")}');
     });
   }
 
@@ -62,8 +62,6 @@ class Converter {
 
     file.readAsLines().then((lines) {
 
-
-      print('ok, $filePath');
    Converter.convertToTsv(
         lines.toString()
         .replaceAll('[', '')
@@ -77,8 +75,6 @@ class Converter {
         '${filePath.split('.').first}.tsv'
       );
       });
-
-
     }
   
 
